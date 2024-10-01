@@ -27,6 +27,7 @@ import androidx.compose.foundation.text.ClickableText
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.withStyle
+import com.google.firebase.auth.FirebaseAuth
 
 
 class MainActivity : ComponentActivity() {
@@ -40,14 +41,11 @@ class MainActivity : ComponentActivity() {
     private val colorText = Color(0xFFFFFFFF)
     private val colorTitle = Color(0xFF821131)
 
-    // Simulando usuarios ya registrados con sus contraseñas
-    private val existingUsers = mapOf(
-        "user1@example.com" to "password1",
-        "user2@example.com" to "password2"
-    )
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        auth = FirebaseAuth.getInstance()
         setContent {
             LoginScreen()
         }
@@ -62,13 +60,13 @@ class MainActivity : ComponentActivity() {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(colorBackground)  // Fondo de la pantalla
+                .background(colorBackground)
                 .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // Logo
             Image(
-                painter = painterResource(id = R.drawable.logo),  // Usa tu recurso de logo
+                painter = painterResource(id = R.drawable.logo),
                 contentDescription = "Logo de la aplicación",
                 modifier = Modifier
                     .size(240.dp)
@@ -80,7 +78,7 @@ class MainActivity : ComponentActivity() {
 
             // Nombre de la aplicación
             Text(
-                text = "RecetarioApp",  // Cambia esto por la cadena @string/app_name
+                text = "RecetarioApp",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 color = colorTitle
@@ -111,18 +109,13 @@ class MainActivity : ComponentActivity() {
             // Botón de inicio de sesión
             Button(
                 onClick = {
-                    if (validateLogin(email, password)) {
-                        Toast.makeText(this@MainActivity, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show()
-                        // Navegar a HomeActivity
-                        val intent = Intent(this@MainActivity, HomeActivity::class.java)
-                        startActivity(intent)
-                    }
+                    loginUser(email, password)
                 },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp)
                     .clip(RoundedCornerShape(8.dp)),
-                colors = ButtonDefaults.buttonColors(backgroundColor = colorButton)  // Color personalizado
+                colors = ButtonDefaults.buttonColors(backgroundColor = colorButton)
             ) {
                 Text("Iniciar Sesión", color = colorText)
             }
@@ -174,32 +167,31 @@ class MainActivity : ComponentActivity() {
             onValueChange = onValueChange,
             label = { Text(label) },
             visualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
-            modifier = Modifier
-                .fillMaxWidth(),  // Asegúrate de que no hay paddings innecesarios aquí
+            modifier = Modifier.fillMaxWidth(),
             singleLine = true,
         )
     }
 
-    // Función de validación para el inicio de sesión
-    private fun validateLogin(email: String, password: String): Boolean {
-        return when {
-            email.isEmpty() || password.isEmpty() -> {
-                Toast.makeText(this, "Por favor, llena todos los campos", Toast.LENGTH_SHORT).show()
-                false
-            }
-            !PatternsCompat.EMAIL_ADDRESS.matcher(email).matches() -> {
-                Toast.makeText(this, "Correo electrónico inválido", Toast.LENGTH_SHORT).show()
-                false
-            }
-            !existingUsers.containsKey(email) -> {
-                Toast.makeText(this, "El correo electrónico no está registrado", Toast.LENGTH_SHORT).show()
-                false
-            }
-            existingUsers[email] != password -> {
-                Toast.makeText(this, "Contraseña incorrecta", Toast.LENGTH_SHORT).show()
-                false
-            }
-            else -> true
+    private fun loginUser(email: String, password: String) {
+        if (email.isEmpty() || password.isEmpty()) {
+            Toast.makeText(this, "Por favor, llena todos los campos", Toast.LENGTH_SHORT).show()
+            return
         }
+
+        if (!PatternsCompat.EMAIL_ADDRESS.matcher(email).matches()) {
+            Toast.makeText(this, "Correo electrónico inválido", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        auth.signInWithEmailAndPassword(email, password)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    Toast.makeText(this, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show()
+                    val intent = Intent(this, HomeActivity::class.java)
+                    startActivity(intent)
+                } else {
+                    Toast.makeText(this, "Fallo en la autenticación: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
     }
 }
