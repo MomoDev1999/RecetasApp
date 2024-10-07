@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "398465832207",
+    "firebase_url": "https://backend-curso-android-studio-default-rtdb.firebaseio.com",
+    "project_id": "backend-curso-android-studio",
+    "storage_bucket": "backend-curso-android-studio.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:398465832207:android:64a282cf60e688e8f45a7a",
+        "android_client_info": {
+          "package_name": "com.example.recetario"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDBPOyVtG2AQmc9VLNNSrR0-B1E4_K9EwY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
