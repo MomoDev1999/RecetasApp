@@ -71,7 +71,6 @@ dependencies {
     implementation("androidx.activity:activity-compose:1.7.0")
     implementation("io.coil-kt:coil-compose:2.1.0")
 
-
     // Herramientas adicionales para Compose
     debugImplementation("androidx.compose.ui:ui-tooling:1.5.0")
     androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.5.0")
@@ -81,11 +80,15 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.0")
 
-    implementation ("androidx.compose.material:material-icons-core:1.7.2")
-    implementation ("androidx.compose.material:material-icons-extended:1.0.0")
+    // Material Icons
+    implementation("androidx.compose.material:material-icons-core:1.7.2")
+    implementation("androidx.compose.material:material-icons-extended:1.0.0")
 
+    // Firebase Platform and Services
     implementation(platform("com.google.firebase:firebase-bom:33.3.0"))
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-auth-ktx")
 
+    // Additional Firebase dependencies if needed
+    implementation("com.google.firebase:firebase-firestore-ktx") // Firestore, if needed
 }
